@@ -1,0 +1,30 @@
+NC_023455
+NC_035057
+Acanthocepola indica
+Acanthocepola krusensternii
+Carassius auratus
+Carassius carassius
+Carassius cuvieri
+Carassius gibelio
+Carassius langsdorfii
+Centropyge acanthops
+Centropyge argi
+Centropyge bispinosa
+Centropyge fisheri
+Centropyge flavicauda
+Centropyge interrupta
+Centropyge joculator
+Centropyge loriculus
+Centropyge multicolor
+Centropyge potteri
+Cepola schlegelii
+Epinephelus bruneus
+Epinephelus moara
+Genicanthus bellus
+Genicanthus lamarck
+Genicanthus melanosplilos
+Genicanthus semifasciatus
+Maccullochella ikei
+Maccullochella macquariensis
+Maccullochella mariensis
+Maccullochella peelii
