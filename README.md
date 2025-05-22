@@ -1,4 +1,4 @@
-## PhyloRef Tool 🧬 — Build & QC Mitochondrial Reference Libraries with Snakemake
+## PhyloRef 🧬 — Build & QC Mitochondrial Reference Libraries with Snakemake
 
 *Semi-automated download ▶︎ filter ▶︎ extract ▶︎ align ▶︎ phylogeny ▶︎ anomaly detection ▶︎ clean.*
 
@@ -27,8 +27,8 @@
 
 ```bash
 # clone & enter project
-git clone https://github.com/<YOUR_GITHUB>/phyloref_tool.git
-cd phyloref_tool
+git clone https://github.com/<YOUR_GITHUB>/PhyloRef.git
+cd PhyloRef
 
 # create environment (≈1–2 min with micromamba)
 micromamba env create -f environment.yaml
