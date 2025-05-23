@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this workflow in your research, please cite it as below."
+title: "PhyloRef: A Snakemake-Based Workflow for Semi-Automated Reference Library Curation via Phylogenetic Anomaly Detection"
+version: "v0.1.0"
+doi: 10.5281/zenodo.15489512
+date-released: 2025-05-23
+
+authors:
+  - family-names: Mai
+    given-names: Yan
+    affiliation: Shanghai Ocean University, College of Fisheries and Life Science
+
+license: MIT
+repository-code: https://github.com/yannnnmai/PhyloRef
+url: https://doi.org/10.5281/zenodo.15489512
+type: software
