@@ -28,7 +28,7 @@
 
 ```bash
 # clone & enter project
-git clone https://github.com/<YOUR_GITHUB>/PhyloRef.git
+git clone https://github.com/yannnnmai/PhyloRef.git
 cd PhyloRef
 
 # create environment (≈1–2 min with micromamba)
