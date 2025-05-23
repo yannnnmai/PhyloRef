@@ -1,3 +1,4 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15489512.svg)](https://doi.org/10.5281/zenodo.15489512)
 ## PhyloRef 🧬 — Build & QC Mitochondrial Reference Libraries with Snakemake
 
 *Semi-automated download ▶︎ filter ▶︎ extract ▶︎ align ▶︎ phylogeny ▶︎ anomaly detection ▶︎ clean.*
