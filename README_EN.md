@@ -27,7 +27,7 @@
 
 ---
 
-## 🚀 Quick Start (Demo)
+## 🚀 Quick Start
 
 ```bash
 # clone & enter project
@@ -47,12 +47,12 @@ eval "$(micromamba shell hook --shell bash)"
 micromamba activate phyloref_env
 
 # run demo until anomaly detection (steps 1–6½)
-snakemake -j 4 --configfile config/demo_config.yaml --until anomaly_done
-# └─ demo_config.yaml is a minimal example (~40 sequences)
+snakemake -j 8 --until anomaly_done
+# └─ Uses example input from resources/ (~100 sequences)
 # └─ PDF + TXT reports saved in results/6_anomaly/
 
 # after manual review of anomaly reports
-snakemake clean_database -j 4
+snakemake clean_database -j 8
 # final cleaned DB saved to: results/7_final_database/outputs/cleaned/
 
 All outputs go to results/, logs to logs/.
