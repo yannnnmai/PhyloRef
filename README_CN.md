@@ -186,7 +186,7 @@ MIT License — 详见 LICENSE 文件
 
 👤 联系方式
 
-维护者：麦言（Yan Mai）  
+维护者：Yan Mai  
 单位：上海海洋大学 水产与生命学院  
 📧 邮箱：yann_maii@foxmail.com
 
