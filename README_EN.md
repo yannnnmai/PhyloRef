@@ -143,16 +143,17 @@ results/
 
 ⸻
 
-🔧 Main Configuration Options (config/config.yaml)
+### 🔧 Main Configuration Options (`config/config.yaml`)
 
-Key	Example	Description
-download.mode	accession / species_name	Download by accessions or species names
-filter.mode	gene / complete	Filter by gene + length or “complete genome” tag
-filter.gene	12S	Target gene name for filtering
-extract.genes	["12S", "16S"]	Genes to extract into Concat.fa
-grouping.max_per_file	2000	Max sequences per group before splitting
-tree.threads	30	Threads for MAFFT
-outgroups	- NC_023455, NC_035057	Optional outgroup IDs for rooting trees
+| Key                   | Example                  | Description                                             |
+|-----------------------|--------------------------|---------------------------------------------------------|
+| `download.mode`       | `accession` / `species_name` | Download by accessions or species names                 |
+| `filter.mode`         | `gene` / `complete`      | Filter by gene + length or "complete genome" tag       |
+| `filter.gene`         | `12S`                    | Target gene name for filtering                         |
+| `extract.genes`       | `["12S", "16S"]`         | Genes to extract into `Concat.fa`                      |
+| `grouping.max_per_file` | `2000`                 | Max sequences per group before splitting               |
+| `tree.threads`        | `30`                     | Number of threads for MAFFT                            |
+| `outgroups`           | `NC_023455, NC_035057`   | Optional outgroup IDs for rooting trees                |
 
 
 ⸻
