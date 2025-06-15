@@ -1,5 +1,5 @@
 # =============================================================================
-# workflow/Snakefile — checkpoint-safe, fully config-driven
+# workflow/Snakefile — checkpoint-safe, fully config-driven (numbered dirs)
 # =============================================================================
 from snakemake.io import directory
 import glob, os
@@ -8,10 +8,18 @@ import glob, os
 #  CONFIG & GLOBAL PATHS
 # -----------------------------------------------------------------------------
 configfile: "config/config.yaml"
-
-RESULTS   = config["results_dir"]
-LOGS      = config["logs_dir"]
 RESOURCES = config["resources_dir"]
+LOGS      = config["logs_dir"]
+RESULTS   = config["results_dir"]
+
+# ---- numbered result sub-directories ----
+DOWNLOAD = f"{RESULTS}/1_downloads"
+FILTER   = f"{RESULTS}/2_filtered"
+EXTRACT  = f"{RESULTS}/3_extracted"
+GROUP    = f"{RESULTS}/4_groups"
+TREE     = f"{RESULTS}/5_trees"
+ANOMALY  = f"{RESULTS}/6_anomaly"
+CLEAN    = f"{RESULTS}/7_final_database"
 
 # -----------------------------------------------------------------------------
 #  HELPER ── checkpoint-aware group collector
@@ -33,13 +41,13 @@ rule download_mtgenomes:
     params:
         script=lambda wc: config["download"]["scripts"][config["download"]["mode"]]
     output:
-        gb_dir=directory(f"{RESULTS}/downloads/outputs/gb_files")
+        gb_dir = directory(f"{DOWNLOAD}/outputs/gb_files")
     log:
         f"{LOGS}/download_mtgenomes.log"
     shell:
         r"""
         mkdir -p {output.gb_dir}
-        python {params.script} -i {input} -o {RESULTS}/downloads -e {config[email]} -k {config[api_key]} > {log} 2>&1
+        python {params.script} -i {input} -o {DOWNLOAD} -e {config[email]} -k {config[api_key]} > {log} 2>&1
         echo "" >> {log}
         echo "Download mode: {config[download][mode]}" >> {log}
         """
@@ -50,9 +58,9 @@ rule download_mtgenomes:
 
 rule filter_sequences:
     input:
-        gb_dir=f"{RESULTS}/downloads/outputs/gb_files"
+        gb_dir = f"{DOWNLOAD}/outputs/gb_files"
     params:
-        outdir   = f"{RESULTS}/filtered",
+        outdir   = FILTER,
         max_seq  = config["filter"]["max_sequences"],
         keep_flags = " ".join([
             "-cf" if config["filter"]["keep_cf"] else "",
@@ -66,7 +74,7 @@ rule filter_sequences:
             else f"-g {config['filter']['gene']} {config['filter']['minlen']}"
         ),
     output:
-        gb_dir=directory(f"{RESULTS}/filtered/outputs/final_sequences_gb")
+        gb_dir = directory(f"{FILTER}/outputs/final_sequences_gb")
     log:
         f"{LOGS}/filter_sequences.log"
     shell:
@@ -84,13 +92,13 @@ rule filter_sequences:
 
 rule extract_genes:
     input:
-        gb_dir=f"{RESULTS}/filtered/outputs/final_sequences_gb"
+        gb_dir = f"{FILTER}/outputs/final_sequences_gb"
     params:
-        outdir=f"{RESULTS}/extracted",
-        gene_arg=("-g " + " ".join(config["extract"]["genes"])) if config["extract"]["genes"] else "",
+        outdir = EXTRACT,
+        gene_arg = ("-g " + " ".join(config["extract"]["genes"])) if config["extract"]["genes"] else "",
     output:
-        concat_fa=f"{RESULTS}/extracted/outputs/Concat.fa",
-        out_dir=directory(f"{RESULTS}/extracted/outputs")
+        concat_fa = f"{EXTRACT}/outputs/Concat.fa",
+        out_dir   = directory(f"{EXTRACT}/outputs")
     log:
         f"{LOGS}/extract_genes.log"
     shell:
@@ -105,12 +113,12 @@ rule extract_genes:
 
 checkpoint group_by_order:
     input:
-        fasta=f"{RESULTS}/extracted/outputs/Concat.fa"
+        fasta = f"{EXTRACT}/outputs/Concat.fa"
     params:
-        max_per_file=config["grouping"]["max_per_file"],
-        og_flags=("-og " + " ".join(config["grouping"]["outgroup_ids"])) if config["grouping"]["outgroup_ids"] else "",
+        max_per_file = config["grouping"]["max_per_file"],
+        og_flags = ("-og " + " ".join(config["grouping"]["outgroup_ids"])) if config["grouping"]["outgroup_ids"] else "",
     output:
-        fa_dir=directory(f"{RESULTS}/groups/fa_files")
+        fa_dir = directory(f"{GROUP}/fa_files")
     log:
         f"{LOGS}/group_by_order.log"
     shell:
@@ -125,19 +133,19 @@ checkpoint group_by_order:
 
 rule build_tree_single:
     input:
-        fa=f"{RESULTS}/groups/fa_files/{{group}}.fa"
+        fa = f"{GROUP}/fa_files/{{group}}.fa"
     params:
-        mafft=config["tree"]["mafft"],
-        fasttree=config["tree"]["fasttree"],
-        align_dir=f"{RESULTS}/trees/alignment",
+        mafft = config["tree"]["mafft"],
+        fasttree = config["tree"]["fasttree"],
+        align_dir = f"{TREE}/alignment",
     output:
-        nwk=f"{RESULTS}/trees/fasttree/{{group}}_fasttree.nwk"
+        nwk = f"{TREE}/fasttree/{{group}}_fasttree.nwk"
     threads: config["tree"]["threads"]
     log:
         f"{LOGS}/build_tree/{{group}}.log"
     shell:
         r"""
-        mkdir -p {params.align_dir} {RESULTS}/trees/fasttree
+        mkdir -p {params.align_dir} {TREE}/fasttree
         {{
             {params.mafft} --thread {threads} {input.fa} > {params.align_dir}/{wildcards.group}_aligned.fa
             {params.fasttree} -fastest -nt {params.align_dir}/{wildcards.group}_aligned.fa > {output.nwk}
@@ -150,13 +158,13 @@ rule build_tree_single:
 
 rule detect_anomaly_single:
     input:
-        tree=f"{RESULTS}/trees/fasttree/{{group}}_fasttree.nwk"
+        tree = f"{TREE}/fasttree/{{group}}_fasttree.nwk"
     params:
-        og_flag=("-og " + ",".join(config["outgroups"])) if config["outgroups"] else "",
-        outdir=f"{RESULTS}/anomaly"
+        og_flag = ("-og " + ",".join(config["outgroups"])) if config["outgroups"] else "",
+        outdir  = ANOMALY
     output:
-        txt=f"{RESULTS}/anomaly/{{group}}_anomaly.txt",
-        pdf=f"{RESULTS}/anomaly/{{group}}.pdf"
+        txt = f"{ANOMALY}/{{group}}_anomaly.txt",
+        pdf = f"{ANOMALY}/{{group}}.pdf"
     log:
         f"{LOGS}/detect_anomaly/{{group}}.log"
     shell:
@@ -172,10 +180,10 @@ rule detect_anomaly_single:
 
 rule anomaly_done:
     input:
-        lambda wc: [f"{RESULTS}/anomaly/{g}_anomaly.txt" for g in groups_from_ckpt(wc)] +
-                   [f"{RESULTS}/anomaly/{g}.pdf" for g in groups_from_ckpt(wc)]
+        lambda wc: [f"{ANOMALY}/{g}_anomaly.txt" for g in groups_from_ckpt(wc)] +
+                   [f"{ANOMALY}/{g}.pdf" for g in groups_from_ckpt(wc)]
     output:
-        touch(f"{RESULTS}/anomaly/.done")
+        touch(f"{ANOMALY}/.done")
     shell:
         "echo '[Snakemake] anomaly stage complete – manual review now.' > /dev/null"
 
@@ -185,27 +193,25 @@ rule anomaly_done:
 
 rule clean_database:
     input:
-        fa_src    = f"{RESULTS}/extracted/outputs",
-        gb_src    = f"{RESULTS}/filtered/outputs/final_sequences_gb",
+        fa_src    = f"{EXTRACT}/outputs",
+        gb_src    = f"{FILTER}/outputs/final_sequences_gb",
         tree_src  = lambda wc: [
-            f"{RESULTS}/trees/fasttree/{g}_fasttree.nwk"
-            for g in groups_from_ckpt(wc)
+            f"{TREE}/fasttree/{g}_fasttree.nwk" for g in groups_from_ckpt(wc)
         ],
         anomalies = lambda wc: [
-            f"{RESULTS}/anomaly/{g}_anomaly.txt"
-            for g in groups_from_ckpt(wc)
+            f"{ANOMALY}/{g}_anomaly.txt" for g in groups_from_ckpt(wc)
         ]
     params:
-        outdir        = f"{RESULTS}/final_database",
+        outdir        = CLEAN,
         sim_files     = " ".join(config["similar_files"]),
         tree_list     = lambda wc: " ".join([
-            f"{RESULTS}/trees/fasttree/{g}_fasttree.nwk" for g in groups_from_ckpt(wc)
+            f"{TREE}/fasttree/{g}_fasttree.nwk" for g in groups_from_ckpt(wc)
         ]),
         anomaly_list  = lambda wc: " ".join([
-            f"{RESULTS}/anomaly/{g}_anomaly.txt" for g in groups_from_ckpt(wc)
+            f"{ANOMALY}/{g}_anomaly.txt" for g in groups_from_ckpt(wc)
         ])
     output:
-        final_dir = directory(f"{RESULTS}/final_database")
+        final_dir = directory(CLEAN)
     log:
         f"{LOGS}/clean_database.log"
     shell:
@@ -218,11 +224,11 @@ rule clean_database:
             -s {params.sim_files} \
             > {log} 2>&1
         """
-        
+
 # -----------------------------------------------------------------------------
 #  FINAL TARGET
 # -----------------------------------------------------------------------------
 
 rule all:
     input:
-        f"{RESULTS}/anomaly/.done"
+        f"{ANOMALY}/.done"
