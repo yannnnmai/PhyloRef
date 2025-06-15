@@ -131,8 +131,8 @@ grouping:
 tree:
   threads: 30                  # Number of CPU threads for MAFFT.
                               # For multi-threading, run Snakemake with the "--cores" option.
-  mafft: "/usr/bin/mafft"     # Path to the MAFFT executable; use "mafft" if it is in $PATH.
-  fasttree: "/home/room/users/zhoutao/conda/envs/python27/phyloref_env/bin/FastTree"  # Path to the FastTree executable.
+  mafft: "mafft"     # Path to the MAFFT executable; use "mafft" if it is in $PATH.
+  fasttree: "fasttree"  # Path to the FastTree executable.
 
 # =============================================================================
 # STEP-6  Phylogenetic Anomaly Detection (detect_anomaly)
