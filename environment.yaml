@@ -21,5 +21,3 @@ dependencies:
   - python-graphviz
   - pytest                 
   - pip                   
-  - pip:
-      - concurrentthread  
